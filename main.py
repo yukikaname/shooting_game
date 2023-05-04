@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from player import Player
+from bullet import Bullet
 
 class ShootingGame:
 
@@ -16,12 +17,14 @@ class ShootingGame:
 		pygame.display.set_caption("shooting_game")
 
 		self.player = Player(self)
+		self.bullets = pygame.sprite.Group()
 
 
 	def run_game(self):
 		while True:
 			self._check_events()
 			self.player.update()
+			self._update_bullet()
 			self._update_screen()
 
 
@@ -46,6 +49,8 @@ class ShootingGame:
 		elif event.key == pygame.K_LEFT:
 			# キャラを左に移動
 			self.player.moving_left = True
+		elif event.key == pygame.K_SPACE:
+			self._fire_bullet()
 
 
 	def _check_keyup_events(self, event):
@@ -55,10 +60,29 @@ class ShootingGame:
 			self.player.moving_left = False
 
 
+	def _fire_bullet(self):
+		"""新しい弾を生成、bulletsグループに追加"""
+		new_bullet = Bullet(self)
+		self.bullets.add(new_bullet)
+
+
+	def _update_bullet(self):
+		"""弾の位置を更新、古い弾を廃棄"""
+		# 弾の位置を更新
+		self.bullets.update()
+
+		# 見えなくなった弾を廃棄
+		for bullet in self.bullets.copy():
+			if bullet.rect.bottom <= 0:
+				self.bullets.remove(bullet)
+
+
 	def _update_screen(self):
 		"""画面上の画像を更新し、新しい画面に切り替える"""
 		self.screen.fill(self.settings.bg_color)
 		self.player.draw_player()
+		for bullet in self.bullets.sprites():
+			bullet.draw_bullet()
 
 		pygame.display.flip()
 

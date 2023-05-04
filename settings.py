@@ -11,3 +11,10 @@ class Settings:
 		self.player_width = 50
 		self.player_height = 50
 		self.player_color = (255, 255, 255)
+
+		# 弾の設定
+		self.bullet_speed = 1.0
+		self.bullet_width = 3
+		self.bullet_height = 15
+		self.bullet_color = (255, 255, 255)
+		
