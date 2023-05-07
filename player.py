@@ -19,6 +19,8 @@ class Player:
 		# 移動フラグ
 		self.moving_right = False
 		self.moving_left = False
+		self.moving_up = False
+		self.moving_down = False
 
 
 	def update(self):
@@ -27,6 +29,10 @@ class Player:
 			self.player_points = [(point[0] + self.player_speed, point[1]) for point in self.player_points]
 		if self.moving_left and self.player_points[0][0] > 0:
 			self.player_points = [(point[0] - self.player_speed, point[1]) for point in self.player_points]
+		if self.moving_up and self.player_points[2][1] > 0:
+			self.player_points = [(point[0], point[1] - self.player_speed) for point in self.player_points]
+		if self.moving_down and self.player_points[0][1] < self.screen_rect.bottom:
+			self.player_points = [(point[0], point[1] + self.player_speed) for point in self.player_points]
 
 
 	def draw_player(self):
