@@ -93,6 +93,22 @@ class ShootingGame:
 				self.bullets.remove(bullet)
 
 
+		self._check_bullet_enemy_collisions()
+
+
+	def _check_bullet_enemy_collisions(self):
+		"""弾と敵の衝突に対応する"""
+		for enemy in self.enemies.copy():
+			if pygame.sprite.spritecollideany(enemy, self.bullets):
+				# 敵の体力が0になったときに衝突した敵と弾を削除する
+				collisions = pygame.sprite.spritecollide(
+						enemy, self.bullets, True)
+				enemy.hp -= 1
+
+				if enemy.hp == 0:
+					self.enemies.remove(enemy)
+
+
 	def _update_enemy(self):
 		"""新たな敵を生成し、敵の位置を更新、見えなくなった敵を廃棄"""
 		# 敵の位置を更新

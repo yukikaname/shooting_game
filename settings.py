@@ -17,7 +17,7 @@ class Settings:
 		self.enemy_width = 50
 		self.enemy_height = 50
 		self.enemy_color = (255, 255, 255)
-		self.enemies_allowed = 3
+		self.enemy_hp = 3
 
 		# 弾の設定
 		self.bullet_speed = 1.0

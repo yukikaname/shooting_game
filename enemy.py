@@ -12,6 +12,7 @@ class Enemy(Sprite):
 		self.width = main_game.settings.enemy_width
 		self.height = main_game.settings.enemy_height
 		self.color = main_game.settings.enemy_color
+		self.hp = main_game.settings.enemy_hp
 
 		self.rect = pygame.Rect(0, 0, self.width, self.height)
 		self.rect.left = randint(self.width, self.screen_rect.right - self.width * 2 + 1)
