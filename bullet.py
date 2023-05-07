@@ -12,7 +12,7 @@ class Bullet(Sprite):
 		self.color = main_game.settings.bullet_color
 
 		self.rect = pygame.Rect(0, 0, self.width, self.height)
-		self.rect.midtop = main_game.player.player_points[2]
+		self.rect.midtop = main_game.player.rect.midtop
 
 		self.y = float(self.rect.y)
 

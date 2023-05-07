@@ -2,6 +2,7 @@ import sys
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from player import Player
 from bullet import Bullet
 from enemy import Enemy
@@ -18,6 +19,8 @@ class ShootingGame:
 		pygame.display.set_caption("shooting_game")
 
 		self.count = 0
+
+		self.stats = GameStats(self)
 
 		self.player = Player(self)
 		self.bullets = pygame.sprite.Group()
@@ -125,12 +128,24 @@ class ShootingGame:
 			self._create_enemy()
 			self.count = 0
 
+		if pygame.sprite.spritecollideany(self.player, self.enemies):
+			self._player_hit()
+
 
 	def _create_enemy(self):
 		"""新たな敵を生成し、enemiesグループに追加"""
 		new_enemy = Enemy(self)
 		self.enemies.add(new_enemy)
 
+
+
+	def _player_hit(self):
+		"""キャラと敵の衝突に対応する"""
+		# キャラの残機を減らす
+		self.stats.player_limit -= 1
+
+		# 新しくキャラを配置
+		self.player.reset_player()
 
 
 	def _update_screen(self):

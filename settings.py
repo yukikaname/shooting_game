@@ -11,6 +11,7 @@ class Settings:
 		self.player_width = 50
 		self.player_height = 50
 		self.player_color = (255, 255, 255)
+		self.player_limit = 3
 
 		# 敵の設定
 		self.enemy_speed = 0.5
