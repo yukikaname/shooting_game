@@ -7,7 +7,10 @@ class GameStats:
 		# ゲームを非アクティブな状態で開始する
 		self.game_active = False
 
+		self.high_score = 0
+
 
 	def reset_stats(self):
 		"""ゲーム中に変更される統計情報を初期化する"""
 		self.player_limit = self.settings.player_limit
+		self.score = 0

@@ -25,3 +25,7 @@ class Settings:
 		self.bullet_width = 3
 		self.bullet_height = 15
 		self.bullet_color = (255, 255, 255)
+
+		# 点数
+		self.point_nomal = 10
+		self.point_crash = 50

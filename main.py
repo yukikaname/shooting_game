@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from player import Player
 from bullet import Bullet
@@ -22,6 +23,7 @@ class ShootingGame:
 		self.count = 0
 
 		self.stats = GameStats(self)
+		self.sb = Scoreboard(self)
 
 		self.player = Player(self)
 		self.bullets = pygame.sprite.Group()
@@ -90,8 +92,10 @@ class ShootingGame:
 
 
 	def _start_game(self):
+		# ゲームの統計情報をリセットする
 		self.stats.reset_stats()
 		self.stats.game_active = True
+		self.sb.prep_score()
 
 		# 残った弾と敵を廃棄
 		self.bullets.empty()
@@ -129,6 +133,12 @@ class ShootingGame:
 
 				if enemy.hp == 0:
 					self.enemies.remove(enemy)
+					self.stats.score += self.settings.point_crash
+				else:
+					self.stats.score += self.settings.point_nomal
+
+				self.sb.prep_score()
+				self.sb.check_high_score()
 
 
 	def _update_enemy(self):
@@ -178,6 +188,9 @@ class ShootingGame:
 			bullet.draw_bullet()
 		for enemy in self.enemies.sprites():
 			enemy.draw_enemy()
+
+		# 得点の情報を描画
+		self.sb.show_score()
 
 		# ゲームが非アクティブのときに「Play」ボタンを描画
 		if not self.stats.game_active:
