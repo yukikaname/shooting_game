@@ -4,7 +4,7 @@ class Settings:
 		# 画面に関する設定
 		self.screen_width = 1200
 		self.screen_height = 650
-		self.bg_color = (50, 50, 50)
+		self.bg_color = (10, 10, 10)
 
 		# 操作キャラの設定
 		self.player_speed = 1.5

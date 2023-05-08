@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from button import Button
 from player import Player
 from bullet import Bullet
 from enemy import Enemy
@@ -26,15 +27,21 @@ class ShootingGame:
 		self.bullets = pygame.sprite.Group()
 		self.enemies = pygame.sprite.Group()
 
+		# Playボタンを作成
+		self.play_button = Button(self, "Play")
+
 
 	def run_game(self):
 		while True:
 			self._check_events()
-			self.player.update()
-			self._update_bullet()
-			self._update_enemy()
+
+			if self.stats.game_active:
+				self.player.update()
+				self._update_bullet()
+				self._update_enemy()
+				self.count += 1
+
 			self._update_screen()
-			self.count += 1
 
 
 	def _check_events(self):
@@ -67,6 +74,9 @@ class ShootingGame:
 		elif event.key == pygame.K_SPACE:
 			self._fire_bullet()
 
+		if event.key == pygame.K_p and not self.stats.game_active:
+			self._start_game()
+
 
 	def _check_keyup_events(self, event):
 		if event.key == pygame.K_RIGHT:
@@ -77,6 +87,15 @@ class ShootingGame:
 			self.player.moving_up = False
 		elif event.key == pygame.K_DOWN:
 			self.player.moving_down = False
+
+
+	def _start_game(self):
+		self.stats.reset_stats()
+		self.stats.game_active = True
+
+		# 残った弾と敵を廃棄
+		self.bullets.empty()
+		self.enemies.empty()
 
 
 	def _fire_bullet(self):
@@ -147,6 +166,9 @@ class ShootingGame:
 		# 新しくキャラを配置
 		self.player.reset_player()
 
+		if self.stats.player_limit <= 0:
+			self.stats.game_active = False
+
 
 	def _update_screen(self):
 		"""画面上の画像を更新し、新しい画面に切り替える"""
@@ -156,6 +178,10 @@ class ShootingGame:
 			bullet.draw_bullet()
 		for enemy in self.enemies.sprites():
 			enemy.draw_enemy()
+
+		# ゲームが非アクティブのときに「Play」ボタンを描画
+		if not self.stats.game_active:
+			self.play_button.draw_button()
 
 		pygame.display.flip()
 
