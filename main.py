@@ -104,6 +104,9 @@ class ShootingGame:
 		# プレイヤーの無敵時間を解除してからスタート
 		self.player.invincible = False
 
+		# マウスカーソルを非表示にする
+		pygame.mouse.set_visible(False)
+
 
 	def _fire_bullet(self):
 		"""新しい弾を生成、bulletsグループに追加"""
@@ -221,6 +224,7 @@ class ShootingGame:
 
 		if self.stats.player_limit <= 0:
 			self.stats.game_active = False
+			pygame.mouse.set_visible(True)
 
 
 	def _update_screen(self):
