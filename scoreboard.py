@@ -13,9 +13,10 @@ class Scoreboard:
 		self.text_color = (255, 255, 255)
 		self.font = pygame.font.SysFont(None, 48)
 
-		# 得点とハイスコアの初期画像を準備
+		# 得点、ハイスコア、残機の初期画像を準備
 		self.prep_score()
 		self.prep_high_score()
+		self.prep_players()
 
 
 	def prep_score(self):
@@ -42,10 +43,23 @@ class Scoreboard:
 		self.high_score_rect.top = self.score_rect.bottom + 10
 
 
+	def prep_players(self):
+		"""得点を描画用の画像に変換"""
+		player_limit_str = "{}".format(self.stats.player_limit)
+		self.limit_image = self.font.render(player_limit_str, True, 
+				self.text_color, self.settings.bg_color)
+
+		# 画面の右上に得点を表示する
+		self.limit_rect = self.limit_image.get_rect()
+		self.limit_rect.left = 20
+		self.limit_rect.top = 20
+
+
 	def show_score(self):
 		"""画面に得点を描画する"""
 		self.screen.blit(self.score_image, self.score_rect)
 		self.screen.blit(self.high_score_image, self.high_score_rect)
+		self.screen.blit(self.limit_image, self.limit_rect)
 
 
 	def check_high_score(self):

@@ -95,6 +95,7 @@ class ShootingGame:
 		self.stats.reset_stats()
 		self.stats.game_active = True
 		self.sb.prep_score()
+		self.sb.prep_players()
 
 		# 残った弾と敵を廃棄
 		self.bullets.empty()
@@ -213,8 +214,9 @@ class ShootingGame:
 
 	def _player_hit(self):
 		"""キャラと敵の衝突に対応する"""
-		# キャラの残機を減らす
+		# キャラの残機を減らし、スコアボードを更新
 		self.stats.player_limit -= 1
+		self.sb.prep_players()
 
 		# 新しくキャラを配置
 		self.player.reset_player()
