@@ -19,6 +19,7 @@ class Settings:
 		self.enemy_height = 50
 		self.enemy_color = (255, 255, 255)
 		self.enemy_hp = 3
+		self.next_enemy = 500
 
 		# 弾の設定
 		self.bullet_speed = 1.0
@@ -26,11 +27,11 @@ class Settings:
 		self.bullet_height = 15
 		self.bullet_color = (255, 255, 255)
 
-		self.enemy_bullet_speed = 0.5
+		self.enemy_bullet_speed = 0.7
 		self.enemy_bullet_width = 5
 		self.enemy_bullet_height = 5
 		self.enemy_bullet_color = (255, 255, 255)
-		self.bullet_count_limit = 600
+		self.bullet_count_limit = 650
 
 		# 点数
 		self.point_nomal = 10

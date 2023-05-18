@@ -20,14 +20,13 @@ class ShootingGame:
 			(self.settings.screen_width, self.settings.screen_height))
 		pygame.display.set_caption("shooting_game")
 
-		self.enemy_count = 0
-
 		self.stats = GameStats(self)
 		self.sb = Scoreboard(self)
 
 		self.player = Player(self)
 		self.bullets = pygame.sprite.Group()
 		self.enemies = pygame.sprite.Group()
+		self.enemy_count = 0
 		self.enemybullets = pygame.sprite.Group()
 
 		# Playボタンを作成
@@ -42,7 +41,6 @@ class ShootingGame:
 				self.player.update()
 				self._update_bullet()
 				self._update_enemy()
-				self.enemy_count += 1
 
 			self._update_screen()
 
@@ -122,6 +120,10 @@ class ShootingGame:
 		# 弾と敵の衝突に対応する
 		self._check_bullet_enemy_collisions()
 
+		# プレイヤーと敵の弾の衝突に対応
+		if pygame.sprite.spritecollideany(self.player, self.enemybullets):
+			self._player_hit()
+
 
 	def _bullet_remove(self):
 		"""見えなくなった弾を廃棄"""
@@ -173,7 +175,7 @@ class ShootingGame:
 				self.enemies.remove(enemy)
 
 		# 新たな敵を生成
-		if self.enemy_count == 500:
+		if self.enemy_count >= self.settings.next_enemy:
 			self._create_enemy()
 			self.enemy_count = 0
 
@@ -187,6 +189,8 @@ class ShootingGame:
 		# プレイヤーと敵の衝突に対応
 		if pygame.sprite.spritecollideany(self.player, self.enemies):
 			self._player_hit()
+
+		self.enemy_count += 1
 
 
 	def _create_enemy(self):

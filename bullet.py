@@ -71,7 +71,7 @@ class EnemyBullet(Sprite):
 		elif self.target['x_flag'] and not self.target['a']:
 			self.x += self.speed * self.direction
 		elif self.target['x_flag'] and self.target['a']:
-			self.x += (1 / math.sqrt(1 + self.target['a'] ** 2)) * self.direction
+			self.x += (self.speed / math.sqrt(1 + self.target['a'] ** 2)) * self.direction
 			self.y = self.target['a'] * self.x + self.target['b']
 
 		self.rect.x = self.x
