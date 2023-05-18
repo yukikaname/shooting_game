@@ -6,7 +6,7 @@ from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
 from player import Player
-from bullet import Bullet
+from bullet import Bullet, EnemyBullet
 from enemy import Enemy
 
 class ShootingGame:
@@ -20,7 +20,7 @@ class ShootingGame:
 			(self.settings.screen_width, self.settings.screen_height))
 		pygame.display.set_caption("shooting_game")
 
-		self.count = 0
+		self.enemy_count = 0
 
 		self.stats = GameStats(self)
 		self.sb = Scoreboard(self)
@@ -28,6 +28,7 @@ class ShootingGame:
 		self.player = Player(self)
 		self.bullets = pygame.sprite.Group()
 		self.enemies = pygame.sprite.Group()
+		self.enemybullets = pygame.sprite.Group()
 
 		# Playボタンを作成
 		self.play_button = Button(self, "Play")
@@ -41,7 +42,7 @@ class ShootingGame:
 				self.player.update()
 				self._update_bullet()
 				self._update_enemy()
-				self.count += 1
+				self.enemy_count += 1
 
 			self._update_screen()
 
@@ -100,6 +101,7 @@ class ShootingGame:
 		# 残った弾と敵を廃棄
 		self.bullets.empty()
 		self.enemies.empty()
+		self.enemybullets.empty()
 
 
 	def _fire_bullet(self):
@@ -112,14 +114,32 @@ class ShootingGame:
 		"""弾の位置を更新、古い弾を廃棄"""
 		# 弾の位置を更新
 		self.bullets.update()
+		self.enemybullets.update()
 
 		# 見えなくなった弾を廃棄
+		self._bullet_remove()
+
+		# 弾と敵の衝突に対応する
+		self._check_bullet_enemy_collisions()
+
+
+	def _bullet_remove(self):
+		"""見えなくなった弾を廃棄"""
+		# プレイヤーの弾の廃棄
 		for bullet in self.bullets.copy():
 			if bullet.rect.bottom <= 0:
 				self.bullets.remove(bullet)
 
+		# 敵の弾の廃棄
+		for bullet in self.enemybullets.copy():
+			screen_rect = self.screen.get_rect()
 
-		self._check_bullet_enemy_collisions()
+			remove_bottom = bullet.rect.top >= screen_rect.bottom
+			remove_top = bullet.rect.bottom <= 0
+			remove_right = bullet.rect.left >= screen_rect.right
+			remove_left = bullet.rect.right <= 0
+			if remove_bottom or remove_top or remove_right or remove_left:
+				self.enemybullets.remove(bullet)
 
 
 	def _check_bullet_enemy_collisions(self):
@@ -153,10 +173,18 @@ class ShootingGame:
 				self.enemies.remove(enemy)
 
 		# 新たな敵を生成
-		if self.count == 500:
+		if self.enemy_count == 500:
 			self._create_enemy()
-			self.count = 0
+			self.enemy_count = 0
 
+		# 敵の弾を生成
+		for enemy in self.enemies:
+			if enemy.bullet_count >= self.settings.bullet_count_limit:
+				self._fire_enemy_bullet(enemy)
+				enemy.bullet_count = 0
+			enemy.bullet_count += 1
+
+		# プレイヤーと敵の衝突に対応
 		if pygame.sprite.spritecollideany(self.player, self.enemies):
 			self._player_hit()
 
@@ -166,6 +194,11 @@ class ShootingGame:
 		new_enemy = Enemy(self)
 		self.enemies.add(new_enemy)
 
+
+	def _fire_enemy_bullet(self, enemy):
+		"""新しい敵の弾を生成し、enemy_bulletsグループに追加"""
+		new_enemy_bullet = EnemyBullet(self, enemy)
+		self.enemybullets.add(new_enemy_bullet)
 
 
 	def _player_hit(self):
@@ -188,6 +221,8 @@ class ShootingGame:
 			bullet.draw_bullet()
 		for enemy in self.enemies.sprites():
 			enemy.draw_enemy()
+		for bullet in self.enemybullets.sprites():
+			bullet.draw_bullet()
 
 		# 得点の情報を描画
 		self.sb.show_score()
