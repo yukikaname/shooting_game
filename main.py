@@ -101,6 +101,9 @@ class ShootingGame:
 		self.enemies.empty()
 		self.enemybullets.empty()
 
+		# プレイヤーの無敵時間を解除してからスタート
+		self.player.invincible = False
+
 
 	def _fire_bullet(self):
 		"""新しい弾を生成、bulletsグループに追加"""
@@ -121,7 +124,7 @@ class ShootingGame:
 		self._check_bullet_enemy_collisions()
 
 		# プレイヤーと敵の弾の衝突に対応
-		if pygame.sprite.spritecollideany(self.player, self.enemybullets):
+		if not self.player.invincible and pygame.sprite.spritecollideany(self.player, self.enemybullets):
 			self._player_hit()
 
 
@@ -187,7 +190,7 @@ class ShootingGame:
 			enemy.bullet_count += 1
 
 		# プレイヤーと敵の衝突に対応
-		if pygame.sprite.spritecollideany(self.player, self.enemies):
+		if not self.player.invincible and pygame.sprite.spritecollideany(self.player, self.enemies):
 			self._player_hit()
 
 		self.enemy_count += 1
@@ -213,6 +216,9 @@ class ShootingGame:
 		# 新しくキャラを配置
 		self.player.reset_player()
 
+		# 復帰後、無敵時間を発生
+		self.player.invincible = True
+
 		if self.stats.player_limit <= 0:
 			self.stats.game_active = False
 
@@ -220,7 +226,16 @@ class ShootingGame:
 	def _update_screen(self):
 		"""画面上の画像を更新し、新しい画面に切り替える"""
 		self.screen.fill(self.settings.bg_color)
-		self.player.draw_player()
+
+		if self.player.invincible:
+			invincible_count_pd = "{:0>2}".format(self.player.invincible_count)
+			lower_limit = int(invincible_count_pd[-2]) >= 0
+			upper_limit = int(invincible_count_pd[-2]) <= 4
+			if lower_limit and upper_limit:
+				self.player.draw_player()
+		else:
+			self.player.draw_player()
+
 		for bullet in self.bullets.sprites():
 			bullet.draw_bullet()
 		for enemy in self.enemies.sprites():
@@ -236,6 +251,7 @@ class ShootingGame:
 			self.play_button.draw_button()
 
 		pygame.display.flip()
+
 
 
 if __name__ == "__main__":

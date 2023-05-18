@@ -9,6 +9,10 @@ class Player:
 		self.player_height = main_game.settings.player_height
 		self.player_color = main_game.settings.player_color
 		self.player_speed = main_game.settings.player_speed
+		self.invincible_time = main_game.settings.invincible_time
+
+		self.invincible = False
+		self.invincible_count = 0
 
 		self.rect = pygame.Rect(0, 0, self.player_width, self.player_height)
 		self.rect.midbottom = self.screen_rect.midbottom
@@ -39,6 +43,13 @@ class Player:
 		self.rect.x = self.x
 		self.rect.y = self.y
 		self.player_points = [self.rect.bottomleft, self.rect.bottomright, self.rect.midtop]
+
+		if self.invincible:
+			self.invincible_count += 1
+			if self.invincible_count >= self.invincible_time:
+				self.invincible = False
+				self.invincible_count = 0
+
 
 
 	def draw_player(self):
